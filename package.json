@@ -5,6 +5,8 @@
     "deploy": "wrangler deploy --minify"
   },
   "dependencies": {
+    "@prisma/adapter-d1": "^6.2.1",
+    "@prisma/client": "^6.2.1",
     "hono": "^4.6.16",
     "openai": "^4.77.3"
   },
