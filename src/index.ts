@@ -1,9 +1,27 @@
 import { Hono } from "hono";
+import prismaClients from "./lib/prismaClient";
 
-const app = new Hono();
+type Bindings = {
+  DB: D1Database;
+};
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
+const app = new Hono<{ Bindings: Bindings }>();
+
+app.get("/", async (c) => {
+  const prisma = await prismaClients.fetch(c.env.DB);
+  const movies = await prisma.movie.findMany();
+  return c.json(movies);
+});
+
+app.get("/:id", async (c) => {
+  const prisma = await prismaClients.fetch(c.env.DB);
+  const id = c.req.param("id");
+  const movie = await prisma.movie.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+  return c.json(movie);
 });
 
 export default app;

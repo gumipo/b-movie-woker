@@ -17,7 +17,7 @@ name = "b-movie-woker"
 
 [[d1_databases]]
 binding = "DB"
-database_id = ""
+database_id = "d9fc16d3-7b47-4602-9eba-2387ccabfe1d"
 database_name = "b-movie-db"
 
 # [ai]
