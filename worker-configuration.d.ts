@@ -2,5 +2,5 @@
 
 interface Env {
   DB: D1Database;
-  OPEN_API_KEY: OpenApiKey;
+  OPENAI_API_KEY: OpenAIApiKey;
 }

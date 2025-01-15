@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import prismaClients from "./lib/prismaClient";
+import { generateMovie } from "./generateMovie";
 
 type Bindings = {
   DB: D1Database;
@@ -24,4 +25,15 @@ app.get("/:id", async (c) => {
   return c.json(movie);
 });
 
-export default app;
+const scheduled: ExportedHandlerScheduledHandler<Env> = async (
+  event,
+  env,
+  ctx
+) => {
+  ctx.waitUntil(generateMovie(env));
+};
+
+export default {
+  fetch: app.fetch,
+  scheduled,
+};
