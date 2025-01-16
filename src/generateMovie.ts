@@ -18,9 +18,13 @@ export const generateMovie = async (env: Env) => {
         schema: {
           type: "object",
           properties: {
-            email: {
-              description: "The email address that appears in the input",
-              type: "",
+            title: {
+              description: "映画のタイトル",
+              type: "string",
+            },
+            description: {
+              description: "映画のあらすじ",
+              type: "string",
             },
           },
           additionalProperties: false,
