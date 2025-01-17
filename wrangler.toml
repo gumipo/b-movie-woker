@@ -4,8 +4,9 @@ name = "b-movie-woker"
 
 # compatibility_flags = [ "nodejs_compat" ]
 
-# [vars]
-# MY_VAR = "my-variable"
+[vars]
+DATABASE_URL = ""
+OPENAI_API_KEY = ""
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
@@ -17,7 +18,7 @@ name = "b-movie-woker"
 
 [[d1_databases]]
 binding = "DB"
-database_id = "d9fc16d3-7b47-4602-9eba-2387ccabfe1d"
+database_id = ""
 database_name = "b-movie-db"
 
 # [ai]
@@ -26,3 +27,6 @@ database_name = "b-movie-db"
 # [observability]
 # enabled = true
 # head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
