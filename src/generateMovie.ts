@@ -11,6 +11,8 @@ export const generateMovie = async (env: Env) => {
     const title = movie.title;
     const description = movie.description;
     const genre = movie.genre;
+    const src = await generateMoviePoster(title, description, env);
+
     // const genres: { name: string }[] = genre.map((g: string) => ({
     //   name: g,
     // }));
@@ -104,4 +106,21 @@ const generateMovieTitle = async (env: Env) => {
 
   const movies = completion.choices[0].message.parsed;
   return movies;
+};
+
+const generateMoviePoster = async (
+  title: string,
+  description: string,
+  env: Env
+) => {
+
+
+  const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+  const image = await openai.images.generate({
+    model: "dall-e-3",
+    prompt: `B級映画のポスターを作成したいです。映画のタイトルは『${title}』映画のあらすじは『${description}』です。ポスターを作成してください。`,
+    n: 1,
+  });
+
+  
 };

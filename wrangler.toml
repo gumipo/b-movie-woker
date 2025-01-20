@@ -12,17 +12,14 @@ OPENAI_API_KEY = ""
 # binding = "MY_KV_NAMESPACE"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-# [[r2_buckets]]
-# binding = "MY_BUCKET"
-# bucket_name = "my-bucket"
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "my-bucket"
 
 [[d1_databases]]
 binding = "DB"
 database_id = ""
 database_name = "b-movie-db"
-
-# [ai]
-# binding = "AI"
 
 # [observability]
 # enabled = true
