@@ -11,7 +11,8 @@ export const generateMovie = async (env: Env) => {
     const title = movie.title;
     const description = movie.description;
     const genre = movie.genre;
-    const src = await generateMoviePoster(title, description, env);
+
+    const url = await generateMoviePoster(title, description, env);
 
     // const genres: { name: string }[] = genre.map((g: string) => ({
     //   name: g,
@@ -26,7 +27,7 @@ export const generateMovie = async (env: Env) => {
         title,
         description,
         year: movie.release_year,
-        src: "test",
+        src: url,
       },
     });
   });
@@ -113,14 +114,38 @@ const generateMoviePoster = async (
   description: string,
   env: Env
 ) => {
+  try {
+    const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+    const image = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `B級映画のポスターを作成したいです。映画のタイトルは『${title}』映画のあらすじは『${description}』です。ポスターを作成してください。`,
+      n: 1,
+      size: "1024x1024",
+      response_format: "url",
+    });
 
+    const imageUrl = image.data[0].url;
+    if (!imageUrl) {
+      throw new Error("No image URL returned from OpenAI");
+    }
 
-  const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
-  const image = await openai.images.generate({
-    model: "dall-e-3",
-    prompt: `B級映画のポスターを作成したいです。映画のタイトルは『${title}』映画のあらすじは『${description}』です。ポスターを作成してください。`,
-    n: 1,
-  });
+    const imageResponse = await fetch(imageUrl);
+    const objectKey = `movie-posters/${title}.png`;
 
-  
+    if (!imageResponse.ok) {
+      throw new Error("Failed to download image");
+    }
+
+    await env.MY_BUCKET.put(objectKey, imageResponse.body, {
+      httpMetadata: {
+        contentType: "image/png",
+      },
+    });
+
+    const r2Url = `${env.R2_API_URL}/${objectKey}`;
+
+    return r2Url;
+  } catch {
+    throw new Error("えらー");
+  }
 };

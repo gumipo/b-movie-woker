@@ -4,6 +4,7 @@ import { generateMovie } from "./generateMovie";
 
 type Bindings = {
   DB: D1Database;
+  MY_BUCKET: R2Bucket;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
