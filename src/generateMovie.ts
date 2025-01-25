@@ -5,8 +5,6 @@ export const generateMovie = async (env: Env) => {
   const prisma = await prismaClients.fetch(env.DB);
   const data = (await generateMovieTitle(env)) as any;
 
-  console.log(data.movies);
-
   const promises = data.movies.map(async (movie: any) => {
     const title = movie.title;
     const description = movie.description;
@@ -14,22 +12,51 @@ export const generateMovie = async (env: Env) => {
 
     const url = await generateMoviePoster(title, description, env);
 
-    // const genres: { name: string }[] = genre.map((g: string) => ({
-    //   name: g,
-    // }));
+    const genres: { name: string }[] = genre.map((g: string) => ({
+      name: g,
+    }));
 
-    // await prisma.genre.createMany({
-    //   data: genres,
-    // });
+    const genrePromises = genres.map(async (genre) => {
+      return await prisma.genre.upsert({
+        where: {
+          name: genre.name,
+        },
+        create: {
+          name: genre.name,
+        },
+        update: {
+          name: genre.name,
+        },
+        select: {
+          id: true,
+        },
+      });
+    });
 
-    await prisma.movie.create({
+    const genreIDs = await Promise.all(genrePromises);
+
+    const movieId = await prisma.movie.create({
       data: {
         title,
         description,
         year: movie.release_year,
         src: url,
       },
+      select: {
+        id: true,
+      },
     });
+
+    const genreMoviePromises = genreIDs.map(async (genreId) => {
+      return await prisma.movieGenre.create({
+        data: {
+          movie_id: movieId.id,
+          gnere_id: genreId.id,
+        },
+      });
+    });
+
+    await Promise.all(genreMoviePromises);
   });
 
   await Promise.all(promises);
